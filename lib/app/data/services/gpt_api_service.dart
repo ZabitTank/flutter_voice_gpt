@@ -32,7 +32,8 @@ class GptApiService {
 
     // Send the request and handle the response as a stream
     final response = await request.send();
-    final stream = response.stream.transform(utf8.decoder);
+
+    // final stream = response.stream.transform(utf8.decoder);
     // final buffer = StringBuffer();
     // await for (final chunk in stream) {
     //   buffer.write(chunk);
