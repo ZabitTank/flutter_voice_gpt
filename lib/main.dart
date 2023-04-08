@@ -5,7 +5,7 @@ import 'package:flutter_voice_gpt/app/data/models/locals/global_setting_hive.dar
 import 'package:flutter_voice_gpt/app/data/models/providers/global_setting_provider.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/gpt_chat_provider.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/gpt_model_provider.dart';
-import 'package:flutter_voice_gpt/app/modules/settings_page/setting_screen.dart';
+import 'package:flutter_voice_gpt/app/modules/chat_page/chat_screen.dart';
 import 'package:flutter_voice_gpt/core/theme/theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         darkTheme: darkTheme,
         themeMode: value.themeMode,
         builder: EasyLoading.init(),
-        home: const SettingScreen(),
+        home: const ChatScreen(),
       ),
     );
   }

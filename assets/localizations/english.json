@@ -1,0 +1,21 @@
+{
+  "localization1": "English",
+  "localization2": "Vietnamese",
+  "chatscreen_hint_textfield": "How I can help you",
+  "chatscreen_error_empty_textfield": "Please Enter message",
+  "chatscreen_modal_select_modal": "Choose Model",
+  "chatscreen_modal_error_modal": "Not Found anymodel",
+  "settingscreen_appbar": "Setting UI",
+  "settingscreen_section_common": "Common",
+  "settingscreen_section_common_language": "Language",
+  "settingscreen_section_common_theme": "Dark Mode",
+  "settingscreen_section_gpt_key": "API Key",
+  "settingscreen_section_gpt_use_system_key": "Currently using System Key",
+  "settingscreen_section_gpt_use_your_key": "Currently using Your Key",
+  "settingscreen_section_gpt": "Chat GPT Setting",
+  "settingscreen_section_auto_voice": "Auto read text",
+  "settingscreen_section_gpt_delete": "Delete Chat History",
+  "settingscreen_section_gpt_delete_confirm": "Are you sure to delete chat history",
+  "yes": "Yes",
+  "no": "No"
+}

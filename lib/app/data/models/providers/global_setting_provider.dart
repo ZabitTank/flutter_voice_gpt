@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_voice_gpt/app/data/models/locals/global_setting_hive.dart';
+import 'package:flutter_voice_gpt/core/localization/my_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GlobalSettingProvider extends ChangeNotifier {
   late Box<GlobalSetting> database;
   late GlobalSetting appSettings;
 
+  String language = "English";
   bool isUsingDarkMode = false;
+
+  MyAppLocalizations localizations = MyAppLocalizations("english");
 
   get themeMode {
     return appSettings.isDark ? ThemeMode.dark : ThemeMode.light;
@@ -16,6 +20,7 @@ class GlobalSettingProvider extends ChangeNotifier {
   Future<void> initialize() async {
     database = await Hive.openBox<GlobalSetting>("settings");
     appSettings = database.get("setting") ?? GlobalSetting(chatHistory: []);
+    if (await localizations.load()) {}
   }
 
   Future<void> toggleTheme(bool isDark) async {

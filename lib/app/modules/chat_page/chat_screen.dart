@@ -5,6 +5,7 @@ import 'package:flutter_voice_gpt/app/data/models/providers/gpt_model_provider.d
 import 'package:flutter_voice_gpt/app/data/services/gpt_api_service.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/chat_service.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/chat_widget.dart';
+import 'package:flutter_voice_gpt/app/modules/settings_page/setting_screen.dart';
 import 'package:flutter_voice_gpt/app/widgets/utils_widget.dart';
 import 'package:flutter_voice_gpt/core/theme/theme.dart';
 import 'package:flutter_voice_gpt/core/values/constants.dart';
@@ -55,13 +56,26 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text("Voice GPT"),
         actions: [
           IconButton(
-              onPressed: () async {
-                await ChatService.showModalSheet(context);
-              },
-              icon: const Icon(
-                Icons.more_vert_rounded,
-                color: Colors.white,
-              ))
+            onPressed: () async {
+              await ChatService.showModalSheet(context);
+            },
+            icon: const Icon(
+              Icons.more_vert_rounded,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingScreen()),
+              );
+            },
+            icon: const Icon(
+              Icons.more_vert_rounded,
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
       body: SafeArea(
@@ -94,7 +108,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: textEditingController,
                     onSubmitted: (value) {},
                     decoration: InputDecoration(
-                        hintText: "How I can help you ",
+                        hintText: "How I can help you",
                         hintStyle: context.labelSmall,
                         floatingLabelBehavior: FloatingLabelBehavior.never),
                   ),

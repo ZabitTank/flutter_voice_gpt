@@ -3,3 +3,12 @@ enum TokenType {
   refreshToken,
   apiToken,
 }
+
+enum MyAppLocalizations {
+  vietnam("vietnam"),
+  english("english");
+
+  final String filename;
+
+  const MyAppLocalizations(this.filename);
+}
