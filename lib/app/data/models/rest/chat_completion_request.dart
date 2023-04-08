@@ -6,8 +6,14 @@ part 'chat_completion_request.g.dart';
 class ChatComletionRequest {
   String model;
   List<ChatCompletionMessage> messages;
+  int? max_tokens;
+  bool? stream;
 
-  ChatComletionRequest({required this.model, required this.messages});
+  ChatComletionRequest(
+      {required this.model,
+      required this.messages,
+      this.max_tokens = 100,
+      this.stream = false});
 
   factory ChatComletionRequest.fromJson(Map<String, dynamic> json) =>
       _$ChatComletionRequestFromJson(json);

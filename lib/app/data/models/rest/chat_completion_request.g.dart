@@ -13,6 +13,8 @@ ChatComletionRequest _$ChatComletionRequestFromJson(
       messages: (json['messages'] as List<dynamic>)
           .map((e) => ChatCompletionMessage.fromJson(e as Map<String, dynamic>))
           .toList(),
+      max_tokens: json['max_tokens'] as int? ?? 100,
+      stream: json['stream'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ChatComletionRequestToJson(
@@ -20,4 +22,6 @@ Map<String, dynamic> _$ChatComletionRequestToJson(
     <String, dynamic>{
       'model': instance.model,
       'messages': instance.messages.map((e) => e.toJson()).toList(),
+      'max_tokens': instance.max_tokens,
+      'stream': instance.stream,
     };

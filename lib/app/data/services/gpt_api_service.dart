@@ -1,5 +1,6 @@
-import 'package:flutter_voice_gpt/app/data/models/local/model.dart';
+import 'package:flutter_voice_gpt/app/data/models/locals/gpt_model_info.dart';
 import 'package:flutter_voice_gpt/app/data/models/rest/chat_completion_request.dart';
+import 'package:flutter_voice_gpt/app/data/models/rest/chat_completion_response.dart';
 import 'package:flutter_voice_gpt/app/data/providers/api_provider.dart';
 import 'package:flutter_voice_gpt/core/values/constants.dart';
 
@@ -19,21 +20,29 @@ class GptApiService {
 
       List modelSnapshot = [];
       for (var model in response.data['data']) {
-        print(model);
         modelSnapshot.add(model);
       }
 
       return GPTModelInfo.modelsFromSnapshot(modelSnapshot);
     } catch (e) {
-      rethrow;
+      return Future.error("App Error");
     }
   }
 
-  static Future<List<String>> sendRequest(
+  static Future<ChatCompletionResponse> sendRequest(
       ChatComletionRequest requestBody) async {
-    await Future.delayed(Duration.zero);
+    try {
+      var response = await APIHandlerImp.instance
+          .post(requestBody, APIPath.getMessage, useToken: true);
 
-    return ["For test UI only"];
+      if (response.data['error'] != null) {
+        return Future.error(response.data['error']['message']);
+      }
+
+      return ChatCompletionResponse.fromJson(response.data);
+    } catch (e) {
+      return Future.error("App Error");
+    }
   }
 
   static Stream<String> receiveGenerateTextStream(
