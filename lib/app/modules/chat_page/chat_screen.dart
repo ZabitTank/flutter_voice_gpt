@@ -45,7 +45,6 @@ class _ChatScreenState extends State<ChatScreen> {
     final modelsProvider = Provider.of<ModelsProvider>(context);
     final chatProvider = Provider.of<ChatProvider>(context);
 
-    _isTyping = true;
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -94,10 +93,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     focusNode: focusNode,
                     controller: textEditingController,
                     onSubmitted: (value) {},
-                    decoration: InputDecoration.collapsed(
-                      hintText: "How I can help you ",
-                      hintStyle: context.bodyMedium,
-                    ),
+                    decoration: InputDecoration(
+                        hintText: "How I can help you ",
+                        hintStyle: context.labelSmall,
+                        floatingLabelBehavior: FloatingLabelBehavior.never),
                   ),
                 ),
                 IconButton(
@@ -122,6 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       if (textEditingController.text.isEmpty) {
         ChatService.showError(context, "Please Enter message");
+        return;
       }
       setState(() {
         _resetTextFieldStateBefore(chatProvider);
@@ -153,5 +153,6 @@ class _ChatScreenState extends State<ChatScreen> {
     chatProvider.addUserMessage(msg: textEditingController.text);
     textEditingController.clear();
     focusNode.unfocus();
+    scrollToTheEnd();
   }
 }

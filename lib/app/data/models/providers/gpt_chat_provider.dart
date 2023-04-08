@@ -20,23 +20,16 @@ class ChatProvider with ChangeNotifier {
 
   Future<void> sendMessageAndGetAnswers(
       {required String msg, required String chosenModelId}) async {
-    var response = await GptApiService.sendRequest(
-        ChatComletionRequest(messages: _chatLog, model: chosenModelId));
-    // if (chosenModelId.toLowerCase().startsWith("gpt")) {
-    //   chatList.addAll(await GptApiService.sendMessageGPT(
-    //     message: msg,
-    //     modelId: chosenModelId,
-    //   ));
-    // } else {
-    //   chatList.addAll(await ApiService.sendMessage(
-    //     message: msg,
-    //     modelId: chosenModelId,
-    //   ));
-    // }
+    try {
+      var chatCompletion = await GptApiService.sendRequest(
+          ChatComletionRequest(messages: _chatLog, model: chosenModelId));
 
-    chatList
-        .add(ChatModel(msg: response.choices[0].message.content, chatIndex: 1));
-    _chatLog.add(response.choices[0].message);
-    notifyListeners();
+      chatList.add(ChatModel(
+          msg: chatCompletion.choices[0].message.content, chatIndex: 1));
+      _chatLog.add(chatCompletion.choices[0].message);
+      notifyListeners();
+    } catch (e) {
+      Future.error(e);
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_voice_gpt/app/data/models/locals/gpt_model_info.dart';
 import 'package:flutter_voice_gpt/app/data/models/rest/chat_completion_request.dart';
 import 'package:flutter_voice_gpt/app/data/models/rest/chat_completion_response.dart';
@@ -35,12 +37,15 @@ class GptApiService {
       var response = await APIHandlerImp.instance
           .post(requestBody, APIPath.getMessage, useToken: true);
 
+      print(response);
       if (response.data['error'] != null) {
         return Future.error(response.data['error']['message']);
       }
 
       return ChatCompletionResponse.fromJson(response.data);
     } catch (e) {
+      print(e.toString());
+
       return Future.error("App Error");
     }
   }

@@ -16,7 +16,7 @@ class APIPath {
   static const String openAiHost = "https://api.openai.com/v1";
 
   static const String getModel = "/models";
-  static const String getMessage = "/chat/completetions";
+  static const String getMessage = "/chat/completions";
 }
 
 TestObject testObject = TestObject();
