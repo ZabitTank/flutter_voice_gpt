@@ -44,9 +44,7 @@ class ChatWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              print("hehehe");
-                            },
+                            onPressed: () {},
                             icon: const Icon(
                               Icons.voice_chat,
                               size: 16,

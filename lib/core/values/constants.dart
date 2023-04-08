@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/message_widget.dart';
+
 class AssetsManager {
   const AssetsManager();
   static const String imagePath = "assets/images";
@@ -10,12 +13,42 @@ class AssetsManager {
 
 class APIPath {
   const APIPath();
-  static const String openAiHost = "https://api.openai.com";
-  static const String chatApi = "/v1/completions";
+  static const String openAiHost = "https://api.openai.com/v1";
+
+  static const String getModel = "/models";
+  static const String getMessage = "/completetions";
 }
 
-class CommonObject {
-  static final chatMessages = [
+TestObject testObject = TestObject();
+
+class TestObject {
+  static List<String> models = [
+    "Model1",
+    "Model2",
+    "Model3",
+    "Model4",
+    "Model5",
+    "Model6",
+    "Model7",
+    "Model8",
+  ];
+
+  static List<DropdownMenuItem<String>>? get getModelsItem {
+    List<DropdownMenuItem<String>>? modelsItems =
+        List<DropdownMenuItem<String>>.generate(
+      models.length,
+      (index) => DropdownMenuItem(
+        value: models[index],
+        child: MessageContentWidget(
+          label: models[index],
+          fontSize: 15,
+        ),
+      ),
+    );
+    return modelsItems;
+  }
+
+  static var chatMessages = [
     {
       "msg": "Hello how are you",
       "chatIndex": 0,
@@ -30,7 +63,8 @@ class CommonObject {
       "chatIndex": 0,
     },
     {
-      "msg": "Hello how are you",
+      "msg":
+          "Hello, i am chatGPT, a large language model devloped by OpenAI. I am here to assit you, Hello, i am chatGPT, a large language model devloped by OpenAI. I am here to assit you",
       "chatIndex": 1,
     },
     {
@@ -46,7 +80,8 @@ class CommonObject {
       "chatIndex": 0,
     },
     {
-      "msg": "Hello how are you",
+      "msg":
+          "Hello how are you, Hello, i am chatGPT, a large language model devloped by OpenAI. I am here to assit you, Hello, i am chatGPT, a large language model devloped by OpenAI. I am here to assit you, Hello, i am chatGPT, a large language model devloped by OpenAI. I am here to assit you",
       "chatIndex": 1,
     },
   ];

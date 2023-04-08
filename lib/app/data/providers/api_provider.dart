@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_voice_gpt/core/values/constants.dart';
 import 'package:flutter_voice_gpt/core/values/enum.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class APIHandlerInterface {
   Future<Response> get(String endpoint, {Map<String, dynamic>? query});
@@ -23,7 +25,7 @@ abstract class APIHandlerInterface {
 }
 
 class APIHandlerImp implements APIHandlerInterface {
-  static String host = APIHandlerImp.host;
+  static String host = APIPath.openAiHost;
   static const _storage = FlutterSecureStorage();
   static final client = Dio();
 
@@ -38,7 +40,7 @@ class APIHandlerImp implements APIHandlerInterface {
 
   Future<Map<String, String>> _buildHeader({
     bool useToken = false,
-    TokenType tokenType = TokenType.accessToken,
+    TokenType tokenType = TokenType.apiToken,
   }) async {
     var baseHeader = {
       HttpHeaders.dateHeader: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -91,12 +93,11 @@ class APIHandlerImp implements APIHandlerInterface {
     bool useToken = false,
     Map<String, dynamic>? query,
   }) async {
+    var header = await _buildHeader(useToken: useToken);
     Response response = await client.get(
       host + endpoint,
       queryParameters: query,
-      options: Options(
-        headers: await _buildHeader(useToken: useToken),
-      ),
+      options: Options(headers: header),
     );
     return response;
   }
@@ -146,7 +147,7 @@ class APIHandlerImp implements APIHandlerInterface {
 
   @override
   Future<String?> getAPIKey() async {
-    return await _storage.read(key: "id");
+    return await _storage.read(key: "id") ?? dotenv.env['OPEN_API_KEY'];
   }
 
   @override

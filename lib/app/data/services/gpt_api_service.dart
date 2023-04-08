@@ -1,11 +1,34 @@
+import 'package:flutter_voice_gpt/app/data/models/local/model.dart';
 import 'package:flutter_voice_gpt/app/data/models/rest/chat_completion_request.dart';
 import 'package:flutter_voice_gpt/app/data/providers/api_provider.dart';
+import 'package:flutter_voice_gpt/core/values/constants.dart';
 
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GptApiService {
+  static Future<List<GPTModelInfo>> getModels() async {
+    try {
+      var response =
+          await APIHandlerImp.instance.get(APIPath.getModel, useToken: true);
+
+      if (response.data['error'] != null) {
+        return Future.error(response.data['error']['message']);
+      }
+
+      List modelSnapshot = [];
+      for (var model in response.data['data']) {
+        print(model);
+        modelSnapshot.add(model);
+      }
+
+      return GPTModelInfo.modelsFromSnapshot(modelSnapshot);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<List<String>> sendRequest(
       ChatComletionRequest requestBody) async {
     await Future.delayed(Duration.zero);

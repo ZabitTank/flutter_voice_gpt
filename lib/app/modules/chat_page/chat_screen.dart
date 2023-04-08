@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_voice_gpt/app/data/services/gpt_api_service.dart';
+import 'package:flutter_voice_gpt/app/modules/chat_page/chat_screen.controller.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/chat_widget.dart';
 import 'package:flutter_voice_gpt/app/widgets/utils_widget.dart';
 import 'package:flutter_voice_gpt/core/theme/theme.dart';
@@ -42,7 +44,9 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text("Voice GPT"),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await ChatController.showModalSheet(context);
+              },
               icon: const Icon(
                 Icons.more_vert_rounded,
                 color: Colors.white,
@@ -57,8 +61,8 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: 6,
               itemBuilder: (context, index) => ChatWidget(
                 chatIndex: int.parse(
-                    CommonObject.chatMessages[index]['chatIndex'].toString()),
-                msg: CommonObject.chatMessages[index]['msg'].toString(),
+                    TestObject.chatMessages[index]['chatIndex'].toString()),
+                msg: TestObject.chatMessages[index]['msg'].toString(),
               ),
             ),
           ),
@@ -68,23 +72,32 @@ class _ChatScreenState extends State<ChatScreen> {
               size: 18,
             ),
             addVerticalSpace(15),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: textEditingController,
-                    onSubmitted: (value) {},
-                    decoration: InputDecoration.collapsed(
-                      hintText: "How I can help you ",
-                      hintStyle: context.bodyMedium,
+            Material(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: textEditingController,
+                      onSubmitted: (value) {},
+                      decoration: InputDecoration.collapsed(
+                        hintText: "How I can help you ",
+                        hintStyle: context.bodyMedium,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add, color: Colors.white),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () async {
+                      try {
+                        await GptApiService.getModels();
+                      } catch (e) {
+                        print(e.toString());
+                      }
+                    },
+                    icon: const Icon(Icons.send, color: Colors.white),
+                  ),
+                ],
+              ),
             )
           ],
         ],
