@@ -232,17 +232,17 @@ class _ChatScreenState extends State<ChatScreen> {
         duration: const Duration(seconds: 2), curve: Curves.easeOut);
   }
 
-  void _resetTextFieldStateAfter() {
-    scrollToTheEnd();
-    _isTyping = false;
-    isWaitingResponse = true;
-  }
-
   void _resetTextFieldStateBefore() {
     _isTyping = true;
-    isWaitingResponse = false;
+    isWaitingResponse = true;
     textEditingController.clear();
     focusNode.unfocus();
     scrollToTheEnd();
+  }
+
+  void _resetTextFieldStateAfter() {
+    scrollToTheEnd();
+    _isTyping = false;
+    isWaitingResponse = false;
   }
 }

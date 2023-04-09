@@ -20,8 +20,8 @@ class ChatProvider with ChangeNotifier {
 
   Future<void> addUserMessage(
       {required String msg, String locale = "english"}) async {
-    _chatcompletionLog.add(ChatCompletionMessage(
-        role: "user", content: _shamelessTrickAddonInMessage(msg, locale)));
+    _chatcompletionLog.add(ChatCompletionMessage(role: "user", content: msg));
+
     history.chatHistory.add(ChatModel(msg: msg, chatIndex: 0));
     await database.put("chat", history);
 
@@ -63,7 +63,7 @@ class ChatProvider with ChangeNotifier {
     _chatcompletionLog = ChatModel.modelsFromSnapshot(history.chatHistory);
   }
 
-  String _shamelessTrickAddonInMessage(String message, String locale) {
+  String _shamelessTrickModifyMessage(String message, String locale) {
     String addonString =
         AssetsManager.mapMyLocalizeToMessageAddon[locale] ?? "";
     return "$message$addonString}";

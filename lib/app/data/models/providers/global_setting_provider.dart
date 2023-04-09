@@ -34,9 +34,10 @@ class GlobalSettingProvider extends ChangeNotifier {
   Future<void> toggleLocalization(String localization) async {
     await EasyLoading.show();
 
-    await TTSService.changeLocalization(appSettings.localization);
     appSettings.localization = localization;
     MyLocalization.language = appSettings.localization;
+    await TTSService.changeLocalization(appSettings.localization);
+
     await database.put("setting", appSettings);
 
     notifyListeners();
