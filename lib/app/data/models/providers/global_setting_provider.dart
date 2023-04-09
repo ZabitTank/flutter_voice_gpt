@@ -17,7 +17,8 @@ class GlobalSettingProvider extends ChangeNotifier {
   Future<void> initialize() async {
     database = await Hive.openBox<GlobalSetting>("settings");
     appSettings = database.get("setting") ?? GlobalSetting();
-    MyLocalization.language = appSettings.localization;
+
+    _setLocalization(appSettings.localization);
   }
 
   Future<void> toggleTheme(bool isDark) async {
@@ -33,15 +34,19 @@ class GlobalSettingProvider extends ChangeNotifier {
   Future<void> toggleLocalization(String localization) async {
     await EasyLoading.show();
 
-    appSettings.localization = localization;
-    MyLocalization.language = appSettings.localization;
-    await TTSService.changeLocalization(appSettings.localization);
+    await _setLocalization(localization);
 
     await database.put("setting", appSettings);
 
     notifyListeners();
 
     await EasyLoading.dismiss();
+  }
+
+  Future<void> _setLocalization(String localization) async {
+    appSettings.localization = localization;
+    MyLocalization.language = appSettings.localization;
+    await TTSService.changeLocalization(appSettings.localization);
   }
 
   Future<void> toggleAutoRead(bool isAutoread) async {
