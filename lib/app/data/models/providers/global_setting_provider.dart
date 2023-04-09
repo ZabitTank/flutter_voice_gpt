@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_voice_gpt/app/data/models/locals/global_setting_hive.dart';
 import 'package:flutter_voice_gpt/app/data/providers/api_provider.dart';
-import 'package:flutter_voice_gpt/app/data/services/gpt_api_service.dart';
 import 'package:flutter_voice_gpt/app/data/services/tts_service.dart';
 import 'package:flutter_voice_gpt/core/localization/my_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';

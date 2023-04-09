@@ -5,7 +5,7 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: const Color.fromARGB(255, 125, 223, 12),
   scaffoldBackgroundColor: const Color.fromARGB(255, 82, 196, 139),
-  cardColor: Color.fromARGB(255, 151, 243, 120),
+  cardColor: const Color.fromARGB(255, 151, 243, 120),
   textTheme: TextTheme(
     bodySmall: BaseTextStyle.body3(color: Colors.black),
     bodyMedium: BaseTextStyle.body2(color: Colors.black),
@@ -35,7 +35,7 @@ final ThemeData darkTheme = ThemeData(
     headlineMedium: BaseTextStyle.heading2(color: Colors.white),
     headlineSmall: BaseTextStyle.heading3(color: Colors.white),
     labelSmall: BaseTextStyle.caption(
-      color: Color.fromARGB(255, 60, 234, 135),
+      color: const Color.fromARGB(255, 60, 234, 135),
     ),
   ),
   appBarTheme: const AppBarTheme(

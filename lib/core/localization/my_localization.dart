@@ -14,7 +14,7 @@ class MyLocalization {
       "settingscreen_section_common": "Common",
       "settingscreen_section_common_language": "Language",
       "settingscreen_section_common_theme": "Dark Mode",
-      "settingscreen_section_gpt_key": "API Key",
+      "settingscreen_section_gpt_key": "Set new API key",
       "settingscreen_section_gpt_use_system_key": "Currently using System Key",
       "settingscreen_section_gpt_use_your_key": "Currently using Your Key",
       "settingscreen_section_gpt": "Chat GPT Setting",
@@ -25,6 +25,7 @@ class MyLocalization {
           "Are you sure to delete chat history",
       "select_localization": "Select a language",
       "enter_apikey": "Enter your API Key",
+      "enter_apikey_info": "Use your key or Set empty to use system key",
       "yes": "Yes",
       "no": "No"
     },
@@ -38,7 +39,7 @@ class MyLocalization {
       "settingscreen_section_common": "Chung",
       "settingscreen_section_common_language": "Ngôn ngữ",
       "settingscreen_section_common_theme": "Chế độ tối",
-      "settingscreen_section_gpt_key": "Khóa API",
+      "settingscreen_section_gpt_key": "Thiệt lập API Key",
       "settingscreen_section_gpt_use_system_key": "Đang sử dụng khóa hệ thống",
       "settingscreen_section_gpt_use_your_key": "Đang sử dụng khóa của bạn",
       "settingscreen_section_gpt": "Cài đặt Chat GPT",
@@ -49,6 +50,8 @@ class MyLocalization {
           "Bạn có chắc chắn muốn xóa lịch sử chat không",
       "select_localization": "Chọn ngôn ngữ",
       "enter_apikey": "Nhập key của bạn",
+      "enter_apikey_info":
+          "Sử dựng key của bạn hoặc để trống để sử dụng key hệ thống",
       "yes": "Có",
       "no": "Không"
     }

@@ -1,4 +1,3 @@
-import 'package:flutter_voice_gpt/app/data/models/locals/chat_model_info.dart';
 import 'package:hive/hive.dart';
 
 part 'global_setting_hive.g.dart';

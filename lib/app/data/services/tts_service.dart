@@ -4,8 +4,6 @@ import 'package:flutter_voice_gpt/core/values/constants.dart';
 class TTSService {
   static final FlutterTts _flutterTts = FlutterTts();
 
-  final double _vol = 1.0;
-  final double _pitch = 1.0;
   double speechRate = 0.6;
 
   static Future<void> speak(String text) async {

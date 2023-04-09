@@ -24,6 +24,7 @@ enum LocalizationKeys {
   settingscreen_section_chatlog,
   select_localization,
   enter_apikey,
+  enter_apikey_info,
   yes,
   no,
 }

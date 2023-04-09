@@ -76,11 +76,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 leading: const Icon(Icons.key),
                 title: Text(MyLocalization.translate(
                     LocalizationKeys.settingscreen_section_gpt_key)),
-                trailing: const Icon(Icons.key),
+                trailing: const Icon(Icons.edit),
                 onPressed: (context) async {
                   String? initKey = await GlobalSettingProvider.getAPIKey();
                   String? newApiKey = await _showKeyDialog(initKey);
-                  await globalSettingProvider.handleUseAPIKey(apiKey);
+                  await globalSettingProvider.handleUseAPIKey(newApiKey);
                   setState(() {});
                 },
               ),
@@ -95,12 +95,12 @@ class _SettingScreenState extends State<SettingScreen> {
                     LocalizationKeys.settingscreen_section_auto_voice)),
               ),
               SettingsTile.navigation(
-                leading: const Icon(Icons.key),
+                leading: const Icon(Icons.history),
                 title: Text(MyLocalization.translate(
                     LocalizationKeys.settingscreen_section_chatlog)),
                 value: Text(MyLocalization.translate(
                     LocalizationKeys.settingscreen_section_gpt_delete)),
-                trailing: const Icon(Icons.key),
+                trailing: const Icon(Icons.delete),
                 onPressed: (context) async {
                   bool? confirm = await showYesNoDialog(
                       context,
@@ -167,15 +167,16 @@ class _SettingScreenState extends State<SettingScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(MyLocalization.translate(LocalizationKeys.enter_apikey)),
+          title: Text(
+              MyLocalization.translate(LocalizationKeys.enter_apikey_info)),
           content: TextField(
-            controller: controller,
-            obscureText: true,
-            onChanged: (value) {
-              apiKey = value; // update the API key as the user types
-            },
-            decoration: const InputDecoration(hintText: 'key*******'),
-          ),
+              controller: controller,
+              obscureText: true,
+              onChanged: (value) {
+                apiKey = value; // update the API key as the user types
+              },
+              decoration:
+                  const InputDecoration(hintText: 'Enter your API key')),
           actions: <Widget>[
             TextButton(
               child: Text(MyLocalization.translate(LocalizationKeys.no)),
