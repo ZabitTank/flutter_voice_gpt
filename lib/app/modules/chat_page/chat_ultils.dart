@@ -5,7 +5,7 @@ import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/dropdown.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/message_widget.dart';
 import 'package:flutter_voice_gpt/core/theme/theme.dart';
 
-class ChatService {
+class ChatScreenUltils {
   static Future<void> showModalSheet(BuildContext context) async {
     await showModalBottomSheet(
         shape: const RoundedRectangleBorder(
@@ -20,12 +20,12 @@ class ChatService {
             padding: const EdgeInsets.all(18.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
+              children: [
                 Flexible(
-                  child:
-                      MessageContentWidget(label: "Choose Model", fontSize: 16),
+                  child: MessageContentWidget(
+                      label: "Choose Model", textStyle: context.bodyLarge!),
                 ),
-                Flexible(
+                const Flexible(
                   child: ModelDropdownWidget(),
                 ),
               ],
@@ -35,7 +35,7 @@ class ChatService {
   }
 
   static List<DropdownMenuItem<String>> getModelsAsDropdownMenuItem(
-      List<GPTModelInfo>? models) {
+      BuildContext context, List<GPTModelInfo>? models) {
     List<DropdownMenuItem<String>>? modelsItems =
         List<DropdownMenuItem<String>>.generate(
       models?.length ?? 0,
@@ -43,7 +43,7 @@ class ChatService {
         value: models?[index].id,
         child: MessageContentWidget(
           label: models?[index].id ?? "Not Found anymodel",
-          fontSize: 15,
+          textStyle: context.bodyMedium!,
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_voice_gpt/app/data/services/tts_service.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/message_widget.dart';
 import 'package:flutter_voice_gpt/app/widgets/utils_widget.dart';
+import 'package:flutter_voice_gpt/core/theme/theme.dart';
 import 'package:flutter_voice_gpt/core/values/constants.dart';
 
 class ChatWidget extends StatelessWidget {
@@ -34,7 +36,8 @@ class ChatWidget extends StatelessWidget {
                 ),
                 addHorizontalSpace(8),
                 Expanded(
-                  child: MessageContentWidget(label: msg),
+                  child: MessageContentWidget(
+                      label: msg, textStyle: context.bodyMedium!),
                 ),
                 chatIndex == 0
                     ? const SizedBox.shrink()
@@ -44,7 +47,9 @@ class ChatWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              TTSService.speak(msg);
+                            },
                             icon: const Icon(
                               Icons.voice_chat,
                               size: 16,

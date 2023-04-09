@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_voice_gpt/app/data/models/locals/gpt_model_info.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/gpt_model_provider.dart';
-import 'package:flutter_voice_gpt/app/modules/chat_page/chat_service.dart';
+import 'package:flutter_voice_gpt/app/modules/chat_page/chat_ultils.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/message_widget.dart';
+import 'package:flutter_voice_gpt/core/theme/base_style.dart';
 import 'package:provider/provider.dart';
 
 class ModelDropdownWidget extends StatefulWidget {
@@ -25,6 +26,7 @@ class _ModelDropdownWidgetState extends State<ModelDropdownWidget> {
             return Center(
               child: MessageContentWidget(
                 label: snapshot.error.toString(),
+                textStyle: BaseTextStyle.body1(color: Colors.red),
               ),
             );
           } else {
@@ -33,9 +35,9 @@ class _ModelDropdownWidgetState extends State<ModelDropdownWidget> {
                 : FittedBox(
                     child: DropdownButton(
                       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                      iconEnabledColor: Colors.green,
-                      items: ChatService.getModelsAsDropdownMenuItem(
-                          snapshot.data),
+                      iconEnabledColor: const Color.fromARGB(255, 5, 5, 5),
+                      items: ChatScreenUltils.getModelsAsDropdownMenuItem(
+                          context, snapshot.data),
                       value: currentModels,
                       onChanged: (value) {
                         setState(() {

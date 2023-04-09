@@ -1,15 +1,23 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_voice_gpt/app/data/models/locals/global_setting_hive.dart';
+import 'package:flutter_voice_gpt/app/data/models/providers/global_setting_provider.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/gpt_chat_provider.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/gpt_model_provider.dart';
-import 'package:flutter_voice_gpt/app/data/services/gpt_api_service.dart';
-import 'package:flutter_voice_gpt/app/modules/chat_page/chat_service.dart';
+import 'package:flutter_voice_gpt/app/data/services/stt_service.dart';
+import 'package:flutter_voice_gpt/app/data/services/tts_service.dart';
+import 'package:flutter_voice_gpt/app/modules/chat_page/chat_ultils.dart';
 import 'package:flutter_voice_gpt/app/modules/chat_page/widgets/chat_widget.dart';
 import 'package:flutter_voice_gpt/app/modules/settings_page/setting_screen.dart';
 import 'package:flutter_voice_gpt/app/widgets/utils_widget.dart';
+import 'package:flutter_voice_gpt/core/localization/my_localization.dart';
 import 'package:flutter_voice_gpt/core/theme/theme.dart';
 import 'package:flutter_voice_gpt/core/values/constants.dart';
+import 'package:flutter_voice_gpt/core/values/enum.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -19,17 +27,24 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  SpeechToText speechToText = SpeechToText();
   late bool _isTyping;
+  late bool _isListening;
+
   late TextEditingController textEditingController;
+  late bool isWaitingResponse;
+
   late FocusNode focusNode;
   late ScrollController scrollController;
 
   @override
   void initState() {
+    _isListening = false;
     _isTyping = false;
     textEditingController = TextEditingController();
     focusNode = FocusNode();
     scrollController = ScrollController();
+    isWaitingResponse = false;
     super.initState();
   }
 
@@ -45,6 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final modelsProvider = Provider.of<ModelsProvider>(context);
     final chatProvider = Provider.of<ChatProvider>(context);
+    final globalSettingProvider = context.read<GlobalSettingProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -57,22 +73,25 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              await ChatService.showModalSheet(context);
+              await ChatScreenUltils.showModalSheet(context);
             },
             icon: const Icon(
-              Icons.more_vert_rounded,
+              Icons.assistant,
               color: Colors.white,
             ),
           ),
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingScreen()),
-              );
+              EasyLoading.show().then((value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingScreen()),
+                );
+              }).whenComplete(() => EasyLoading.dismiss());
             },
             icon: const Icon(
-              Icons.more_vert_rounded,
+              Icons.settings,
               color: Colors.white,
             ),
           ),
@@ -84,10 +103,10 @@ class _ChatScreenState extends State<ChatScreen> {
           Flexible(
             child: ListView.builder(
               controller: scrollController,
-              itemCount: chatProvider.chatList.length,
+              itemCount: chatProvider.getChatList.length,
               itemBuilder: (context, index) => ChatWidget(
-                chatIndex: chatProvider.chatList[index].chatIndex,
-                msg: chatProvider.chatList[index].msg,
+                chatIndex: chatProvider.getChatList[index].chatIndex,
+                msg: chatProvider.getChatList[index].msg,
               ),
             ),
           ),
@@ -106,9 +125,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     focusNode: focusNode,
                     controller: textEditingController,
+                    enabled: !isWaitingResponse,
                     onSubmitted: (value) {},
                     decoration: InputDecoration(
-                        hintText: "How I can help you",
+                        hintText: MyLocalization.translate(
+                            LocalizationKeys.chatscreen_hint_textfield),
                         hintStyle: context.labelSmall,
                         floatingLabelBehavior: FloatingLabelBehavior.never),
                   ),
@@ -117,10 +138,51 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () async {
                     await handleSendMessage(
                         chatProvider: chatProvider,
+                        globalSettingProvider: globalSettingProvider,
                         modelsProvider: modelsProvider);
                   },
-                  icon: const Icon(Icons.send, color: Colors.white),
+                  icon: const Icon(Icons.send,
+                      color: Color.fromARGB(255, 63, 150, 4)),
                 ),
+                AvatarGlow(
+                    endRadius: 30.0,
+                    animate: _isListening,
+                    showTwoGlows: true,
+                    glowColor: const Color.fromARGB(255, 0, 255, 8),
+                    duration: const Duration(milliseconds: 2000),
+                    repeat: true,
+                    repeatPauseDuration: const Duration(microseconds: 100),
+                    child: GestureDetector(
+                      onTapDown: (details) async {
+                        if (isWaitingResponse) return;
+
+                        var avaiable = await speechToText.initialize();
+                        if (avaiable) {
+                          setState(() {
+                            _isListening = true;
+                            speechToText.listen(
+                              onResult: (result) {
+                                setState(() {
+                                  textEditingController.text =
+                                      result.recognizedWords;
+                                });
+                              },
+                            );
+                          });
+                        }
+                      },
+                      onTapUp: (details) async {
+                        await speechToText.stop();
+
+                        setState(() {
+                          _isListening = false;
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 20,
+                        child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                      ),
+                    )),
               ],
             ),
           )
@@ -131,20 +193,33 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> handleSendMessage(
       {required ModelsProvider modelsProvider,
+      required GlobalSettingProvider globalSettingProvider,
       required ChatProvider chatProvider}) async {
     try {
       if (textEditingController.text.isEmpty) {
-        ChatService.showError(context, "Please Enter message");
+        ChatScreenUltils.showError(
+            context,
+            MyLocalization.translate(
+                LocalizationKeys.chatscreen_error_empty_textfield));
         return;
       }
+      await chatProvider.addUserMessage(
+          msg: textEditingController.text,
+          locale: globalSettingProvider.appSettings.localization);
+
       setState(() {
-        _resetTextFieldStateBefore(chatProvider);
+        _resetTextFieldStateBefore();
       });
-      await chatProvider.sendMessageAndGetAnswers(
+
+      String generatedText = await chatProvider.sendMessageAndGetAnswers(
           msg: textEditingController.text,
           chosenModelId: modelsProvider.currentModel);
+
+      if (globalSettingProvider.appSettings.isAutoRead) {
+        TTSService.speak(generatedText);
+      }
     } catch (e) {
-      ChatService.showError(context, e.toString());
+      ChatScreenUltils.showError(context, e.toString());
     } finally {
       setState(() {
         _resetTextFieldStateAfter();
@@ -160,11 +235,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void _resetTextFieldStateAfter() {
     scrollToTheEnd();
     _isTyping = false;
+    isWaitingResponse = true;
   }
 
-  void _resetTextFieldStateBefore(ChatProvider chatProvider) {
+  void _resetTextFieldStateBefore() {
     _isTyping = true;
-    chatProvider.addUserMessage(msg: textEditingController.text);
+    isWaitingResponse = false;
     textEditingController.clear();
     focusNode.unfocus();
     scrollToTheEnd();

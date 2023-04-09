@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_voice_gpt/app/data/models/locals/gpt_model_info.dart';
 import 'package:flutter_voice_gpt/app/data/services/gpt_api_service.dart';
 
@@ -20,7 +21,10 @@ class ModelsProvider with ChangeNotifier {
   }
 
   Future<List<GPTModelInfo>> getAllModels() async {
+    await EasyLoading.show();
     modelsList = await GptApiService.getModels();
+    await EasyLoading.dismiss();
+
     return modelsList;
   }
 }

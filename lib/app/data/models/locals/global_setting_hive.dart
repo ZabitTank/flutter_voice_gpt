@@ -11,12 +11,12 @@ class GlobalSetting {
   @HiveField(1, defaultValue: false)
   bool isAutoRead;
 
-  @HiveField(2, defaultValue: [])
-  List<ChatModel> chatHistory;
+  @HiveField(2)
+  String localization;
 
   GlobalSetting({
     this.isDark = false,
     this.isAutoRead = false,
-    this.chatHistory = const [],
+    this.localization = "english",
   });
 }

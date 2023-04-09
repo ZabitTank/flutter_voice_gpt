@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_voice_gpt/app/data/models/providers/global_setting_provider.dart';
+import 'package:flutter_voice_gpt/app/data/models/providers/gpt_chat_provider.dart';
+import 'package:flutter_voice_gpt/core/localization/my_localization.dart';
+import 'package:flutter_voice_gpt/core/values/enum.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -11,22 +14,21 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  bool autoReadText = false;
-
-  String selectedLanguage = 'English'; // initialize with a default language
-  String? apiKey; // initialize with an empty string
-
-  List<String> languageOptions = [
-    'Vietnamese',
-    'English',
-  ];
+  String? apiKey;
+  Map<String, List<String>> languageOptions = {
+    "english": ['Vietnamese', 'English'],
+    "vietnam": ['Tiếng Việt', 'Tiếng Anh'],
+  };
 
   @override
   Widget build(BuildContext context) {
     final globalSettingProvider = context.read<GlobalSettingProvider>();
+    final chatProvider = context.read<ChatProvider>();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings UI"),
+        title: Text(
+            MyLocalization.translate(LocalizationKeys.settingscreen_appbar)),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context)),
@@ -34,67 +36,81 @@ class _SettingScreenState extends State<SettingScreen> {
       body: SettingsList(
         sections: [
           SettingsSection(
-            title: const Text('Common'),
+            title: Text(MyLocalization.translate(
+                LocalizationKeys.settingscreen_section_common)),
             tiles: <SettingsTile>[
               SettingsTile.navigation(
                 leading: const Icon(Icons.language),
-                title: const Text('Language'),
-                value: Text(selectedLanguage),
+                title: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_common_language)),
+                value:
+                    Text(MyLocalization.translate(LocalizationKeys.language)),
                 trailing: const Icon(Icons.keyboard_double_arrow_right),
-                onPressed: (context) {
-                  _showLanguageDialog();
+                onPressed: (context) async {
+                  String? language =
+                      await _showLanguageDialog(globalSettingProvider);
+                  if (language != null) {
+                    await _handleChangeLocalized(
+                        globalSettingProvider, language);
+                    setState(() {});
+                  }
                 },
               ),
               SettingsTile.switchTile(
                 onToggle: (value) async {
                   await globalSettingProvider.toggleTheme(value);
-
                   setState(() {});
                 },
                 initialValue: globalSettingProvider.appSettings.isDark,
                 leading: const Icon(Icons.format_paint),
-                title: const Text('Dark Mode'),
+                title: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_common_theme)),
               ),
             ],
           ),
           SettingsSection(
-            title: const Text('Chat GPT Setting'),
+            title: Text(MyLocalization.translate(
+                LocalizationKeys.settingscreen_section_gpt)),
             tiles: <SettingsTile>[
               SettingsTile.navigation(
                 leading: const Icon(Icons.key),
-                title: const Text('API Key'),
-                value: apiKey == null || apiKey == ""
-                    ? Text("Currently using System Key")
-                    : Text("Currently using Your Key"),
+                title: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_gpt_key)),
                 trailing: const Icon(Icons.key),
-                onPressed: (context) {
-                  _showKeyDialog();
+                onPressed: (context) async {
+                  String? initKey = await GlobalSettingProvider.getAPIKey();
+                  String? newApiKey = await _showKeyDialog(initKey);
+                  await globalSettingProvider.handleUseAPIKey(apiKey);
+                  setState(() {});
                 },
               ),
               SettingsTile.switchTile(
-                onToggle: (value) {
-                  setState(() {
-                    autoReadText = !autoReadText;
-                  });
+                onToggle: (value) async {
+                  await globalSettingProvider.toggleAutoRead(value);
+                  setState(() {});
                 },
-                initialValue: autoReadText,
+                initialValue: globalSettingProvider.appSettings.isAutoRead,
                 leading: const Icon(Icons.voice_chat),
-                title: const Text('Auto read text'),
+                title: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_auto_voice)),
               ),
               SettingsTile.navigation(
                 leading: const Icon(Icons.key),
-                title: const Text('API Key'),
-                value: apiKey == null || apiKey == ""
-                    ? Text("Currently using System Key")
-                    : Text("Currently using Your Key"),
+                title: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_chatlog)),
+                value: Text(MyLocalization.translate(
+                    LocalizationKeys.settingscreen_section_gpt_delete)),
                 trailing: const Icon(Icons.key),
                 onPressed: (context) async {
                   bool? confirm = await showYesNoDialog(
                       context,
-                      "Delete Chat History",
-                      "Are you sure to delete chat history");
+                      MyLocalization.translate(
+                          LocalizationKeys.settingscreen_section_gpt_delete),
+                      MyLocalization.translate(LocalizationKeys
+                          .settingscreen_section_gpt_delete_confirm));
 
                   if (confirm != null && confirm == true) {
+                    await chatProvider.clearChatlog();
                   } else {}
                 },
               ),
@@ -105,13 +121,33 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  void _showLanguageDialog() {
-    showDialog<String>(
+  Future<void> _handleChangeLocalized(
+      GlobalSettingProvider globalSettingProvider, String language) async {
+    switch (globalSettingProvider.appSettings.localization) {
+      case "english":
+        if (language == "Vietnamese") {
+          await globalSettingProvider.toggleLocalization("vietnam");
+        }
+        break;
+      case "vietnam":
+        if (language == "Tiếng Anh") {
+          await globalSettingProvider.toggleLocalization("english");
+        }
+        break;
+    }
+  }
+
+  Future<String?> _showLanguageDialog(
+      GlobalSettingProvider globalSettingProvider) {
+    return showDialog<String?>(
       context: context,
       builder: (BuildContext context) {
+        List<String>? language =
+            languageOptions[globalSettingProvider.appSettings.localization];
         return SimpleDialog(
-          title: Text('Select a language'),
-          children: languageOptions.map((String language) {
+          title: Text(
+              MyLocalization.translate(LocalizationKeys.select_localization)),
+          children: language?.map((String language) {
             return SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context,
@@ -122,40 +158,34 @@ class _SettingScreenState extends State<SettingScreen> {
           }).toList(),
         );
       },
-    ).then((selectedValue) {
-      if (selectedValue != null) {
-        setState(() {
-          selectedLanguage = selectedValue; // update selected language
-        });
-      }
-    });
+    );
   }
 
-  void _showKeyDialog() {
-    TextEditingController controller = TextEditingController(text: apiKey);
-    showDialog<String>(
+  Future<String?> _showKeyDialog(String? apikey) {
+    TextEditingController controller = TextEditingController(text: apikey);
+    return showDialog<String?>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter your API key'),
+          title: Text(MyLocalization.translate(LocalizationKeys.enter_apikey)),
           content: TextField(
             controller: controller,
             obscureText: true,
             onChanged: (value) {
               apiKey = value; // update the API key as the user types
             },
-            decoration: InputDecoration(hintText: 'API key'),
+            decoration: const InputDecoration(hintText: 'key*******'),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(MyLocalization.translate(LocalizationKeys.no)),
               onPressed: () {
                 Navigator.pop(
                     context); // close the dialog without saving the key
               },
             ),
             TextButton(
-              child: Text('Save'),
+              child: Text(MyLocalization.translate(LocalizationKeys.yes)),
               onPressed: () {
                 Navigator.pop(context,
                     apiKey); // close the dialog and return the entered key
@@ -164,13 +194,7 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         );
       },
-    ).then((selectedValue) {
-      if (selectedValue != null) {
-        setState(() {
-          apiKey = selectedValue; // update the API key with the entered value
-        });
-      }
-    });
+    );
   }
 }
 
@@ -185,11 +209,11 @@ Future<bool?> showYesNoDialog(
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('No'),
+            child: Text(MyLocalization.translate(LocalizationKeys.no)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Yes'),
+            child: Text(MyLocalization.translate(LocalizationKeys.yes)),
           ),
         ],
       );

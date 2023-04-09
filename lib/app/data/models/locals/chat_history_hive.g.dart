@@ -1,38 +1,33 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'global_setting_hive.dart';
+part of 'chat_history_hive.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class GlobalSettingAdapter extends TypeAdapter<GlobalSetting> {
+class ChatHistoryAdapter extends TypeAdapter<ChatHistory> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  GlobalSetting read(BinaryReader reader) {
+  ChatHistory read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return GlobalSetting(
-      isDark: fields[0] == null ? false : fields[0] as bool,
-      isAutoRead: fields[1] == null ? false : fields[1] as bool,
-      localization: fields[2] as String,
+    return ChatHistory(
+      chatHistory:
+          fields[0] == null ? [] : (fields[0] as List).cast<ChatModel>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, GlobalSetting obj) {
+  void write(BinaryWriter writer, ChatHistory obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.isDark)
       ..writeByte(1)
-      ..write(obj.isAutoRead)
-      ..writeByte(2)
-      ..write(obj.localization);
+      ..writeByte(0)
+      ..write(obj.chatHistory);
   }
 
   @override
@@ -41,7 +36,7 @@ class GlobalSettingAdapter extends TypeAdapter<GlobalSetting> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is GlobalSettingAdapter &&
+      other is ChatHistoryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
